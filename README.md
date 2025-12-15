@@ -105,8 +105,8 @@ streamlit_app.py # Interactive Streamlit dashboard
 
 ##Why This Project Is Useful**
 
- 1.Helps analyze stock performance easily
- 2.Useful for learning data analytics and visualization
- 3.Good project for portfolio and interviews
- 4.Demonstrates real-world financial data analysis
+ - 1.Helps analyze stock performance easily
+ - 2.Useful for learning data analytics and visualization
+ - 3.Good project for portfolio and interviews
+ - 4.Demonstrates real-world financial data analysis
 
