@@ -1,216 +1,116 @@
-import pandas as pd
 import streamlit as st
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-#Load Data
-df = pd.read_csv(r"C:\Users\Abuthahir\project\Stock_Analysis\Stockfinaldata.csv")
-
-df['date'] = pd.to_datetime(df['date'])
-df.columns = df.columns.str.strip()
-df['Ticker'] = df['Ticker'].str.strip().str.upper()
-df = df.sort_values(['Ticker', 'date'])
-
-#Yearly Performance (%)
-first_close = df.groupby("Ticker")['close'].first()
-last_close = df.groupby("Ticker")['close'].last()
-
-performance = pd.DataFrame({
-    'Ticker': first_close.index,
-    'first_close': first_close.values,
-    'last_close': last_close.values
-})
-
-performance['yearly_return_pct'] = (
-    (performance['last_close'] - performance['first_close'])
-    / performance['first_close']
-) * 100
-
-#Sector-wise Performance (%)
-performance_sector = performance.merge(
-    df[['Ticker', 'sector']].drop_duplicates(),
-    on='Ticker',
-    how='left'
+import plotly.express as px
+from analysis import (
+    key_metrics, volatility_analysis, cumulative_returns,
+    sector_performance, correlation_matrix, monthly_gainers_losers
 )
 
-sector_perf = (
-    performance_sector
-    .groupby('sector')['yearly_return_pct']
-    .mean()
-    .reset_index()
-    .sort_values('yearly_return_pct', ascending=False)
-)
+st.set_page_config(page_title="Stock Dashboard", layout="wide")
 
-#Market Summary
-green_count = (performance['yearly_return_pct'] > 0).sum()
-red_count = (performance['yearly_return_pct'] < 0).sum()
-total_stocks = green_count + red_count
+st.title("📈 Nifty 50 Stock Performance Dashboard")
 
-green_pct = round((green_count / total_stocks) * 100, 2)
-red_pct = round((red_count / total_stocks) * 100, 2)
+# ==========================
+# TABS (CATEGORIES)
+# ==========================
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+    "📊 Overview",
+    "⚡ Volatility",
+    "📈 Returns",
+    "🏭 Sector",
+    "🔗 Correlation",
+    "📅 Monthly"
+])
 
-avg_price = round(df['close'].mean(), 2)
-avg_volume = round(df['volume'].mean(), 2)
+# ==========================
+# 📊 TAB 1 - OVERVIEW
+# ==========================
+with tab1:
+    st.subheader("📊 Market Overview")
 
-#Top Gainers / Losers (%)
-top_10_gainers = performance.sort_values(
-    'yearly_return_pct', ascending=False
-).head(10)
+    top_10_green, top_10_loss, market_summary = key_metrics()
 
-top_10_losers = performance.sort_values(
-    'yearly_return_pct'
-).head(10)
+    col1, col2, col3, col4 = st.columns(4)
+    col1.metric("Green Stocks ↑", market_summary["Total Green Stocks"])
+    col2.metric("Red Stocks ↓", market_summary["Total Red Stocks"])
+    col3.metric("Avg Price (₹)", market_summary["Average Price"])
+    col4.metric("Avg Volume", market_summary["Average Volume"])
 
-#Daily Return (%) & Volatility
-df['daily_return_pct'] = df.groupby('Ticker')['close'].pct_change() * 100
+    st.write("🟢 Top 10 Best Performing Stocks")
+    st.dataframe(top_10_green)
 
-volatility = (
-    df.groupby('Ticker')['daily_return_pct']
-    .std()
-    .reset_index(name='volatility')
-)
-
-top_10_volatile = volatility.sort_values(
-    'volatility', ascending=False
-).head(10)
-
-#Cumulative Return (%)
-df['cum_return_pct'] = (
-    (1 + df['daily_return_pct'] / 100)
-    .groupby(df['Ticker'])
-    .cumprod() - 1
-) * 100
-
-top_5_cum = top_10_gainers.head(5)['Ticker'].tolist()
-
-# Correlation 
-price_df = df.pivot(index='date', columns='Ticker', values='close')
-corr = price_df.pct_change().corr()
-
-# Monthly Returns
-df['month'] = df['date'].dt.month
-monthly_returns = {}
-
-for m in sorted(df['month'].unique()):
-    monthly = df[df['month'] == m]
-    monthly_return = monthly.groupby('Ticker').apply(
-        lambda x: ((x['close'].iloc[-1] - x['close'].iloc[0]) / x['close'].iloc[0]) * 100
-    ).reset_index(name='monthly_return_pct')
-
-    monthly_returns[m] = {
-        'gainers': monthly_return.sort_values('monthly_return_pct', ascending=False).head(5),
-        'losers': monthly_return.sort_values('monthly_return_pct').head(5)
-    }
+    st.write("🔴 Top 10 Worst Performing Stocks")
+    st.dataframe(top_10_loss)
 
 
-st.title("📊 Stock Analysis Dashboard")
+# ==========================
+# ⚡ TAB 2 - VOLATILITY
+# ==========================
+with tab2:
+    st.subheader("⚡ Top 10 Most Volatile Stocks")
 
-st.sidebar.title("Navigation")
-pages = [
-    "Market Summary",
-    "Top Gainers & Losers",
-    "Volatility Analysis",
-    "Cumulative Returns",
-    "Sector-Wise Performance",
-    "Stock Correlation",
-    "Monthly Gainers & Losers"
-]
+    vol = volatility_analysis()
+    fig_vol = px.bar(vol, x="Stock", y="Volatility")
 
-selected_page = st.sidebar.radio("Select Page", pages)
+    st.plotly_chart(fig_vol, use_container_width=True)
 
 
-if selected_page == "Market Summary":
-    st.subheader("Market Overview")
-    st.metric("Green Stocks (%)", f"{green_pct}%")
-    st.metric("Red Stocks (%)", f"{red_pct}%")
-    st.metric("Average Close Price (₹)", avg_price)
-    st.metric("Average Volume", avg_volume)
+# ==========================
+# 📈 TAB 3 - RETURNS
+# ==========================
+with tab3:
+    st.subheader("📈 Cumulative Return of Top 5 Stocks")
 
-elif selected_page == "Top Gainers & Losers":
-    st.subheader("Top 10 Gainers (%)")
-    st.table(top_10_gainers[['Ticker', 'yearly_return_pct']].round(2))
+    cr = cumulative_returns()
+    fig_cr = px.line(cr, x="Date", y="Cumulative_Return", color="Stock")
 
-    st.subheader("Top 10 Losers (%)")
-    st.table(top_10_losers[['Ticker', 'yearly_return_pct']].round(2))
+    st.plotly_chart(fig_cr, use_container_width=True)
 
-elif selected_page == "Volatility Analysis":
-    st.subheader("Top 10 Most Volatile Stocks")
-    st.table(top_10_volatile.round(2))
 
-    fig, ax = plt.subplots(figsize=(10, 5))
-    sns.barplot(
-        x='Ticker',
-        y='volatility',
-        data=top_10_volatile,
-        ax=ax
-    )
-    ax.set_ylabel("Volatility (%)")
-    ax.set_title("Top 10 Volatile Stocks")
-    st.pyplot(fig)
+# ==========================
+# 🏭 TAB 4 - SECTOR
+# ==========================
+with tab4:
+    st.subheader("🏭 Sector-wise Performance")
 
-elif selected_page == "Cumulative Returns":
-    st.subheader("Top 5 Stocks – Cumulative Return (%)")
-    fig, ax = plt.subplots(figsize=(12, 6))
+    sec = sector_performance()
 
-    for sym in top_5_cum:
-        data = df[df['Ticker'] == sym]
-        ax.plot(data['date'], data['cum_return_pct'], label=sym)
+    if sec.empty:
+        st.warning("No sector data available")
+    else:
+        fig_sec = px.bar(sec, x="Sector", y="One_Year_Return")
+        st.plotly_chart(fig_sec, use_container_width=True)
 
-    ax.set_ylabel("Cumulative Return (%)")
-    ax.legend()
-    st.pyplot(fig)
 
-elif selected_page == "Sector-Wise Performance":
-    st.subheader("Average Yearly Return by Sector (%)")
-    st.table(sector_perf.round(2))
+# ==========================
+# 🔗 TAB 5 - CORRELATION
+# ==========================
+with tab5:
+    st.subheader("🔗 Stock Price Correlation Heatmap")
 
-    fig, ax = plt.subplots(figsize=(10, 5))
-    sns.barplot(
-        x='sector',
-        y='yearly_return_pct',
-        data=sector_perf,
-        ax=ax
-    )
-    ax.set_ylabel("Average Return (%)")
-    plt.xticks(rotation=45)
-    st.pyplot(fig)
+    corr = correlation_matrix()
+    fig_corr = px.imshow(corr, color_continuous_scale="RdBu", aspect="auto")
 
-elif selected_page == "Stock Correlation":
-    st.subheader("Stock Price Correlation Heatmap")
-    top_symbols = top_10_gainers.head(20)['Ticker']
+    st.plotly_chart(fig_corr, use_container_width=True)
 
-    fig, ax = plt.subplots(figsize=(12, 10))
-    sns.heatmap(
-        corr.loc[top_symbols, top_symbols],
-        annot=True,
-        fmt=".2f",
-        linewidths=0.5,
-        ax=ax
-    )
-    st.pyplot(fig)
 
-elif selected_page == "Monthly Gainers & Losers":
-    st.subheader("Monthly Top 5 Gainers & Losers (%)")
+# ==========================
+# 📅 TAB 6 - MONTHLY
+# ==========================
+with tab6:
+    st.subheader("📅 Monthly Gainers & Losers")
 
-    for m, data in monthly_returns.items():
-        st.write(f"### Month {m}")
+    monthly = monthly_gainers_losers()
 
-        fig, ax = plt.subplots(1, 2, figsize=(12, 4))
+    month = st.selectbox("Select Month", sorted(monthly["Month"].unique()))
+    selected = monthly[monthly["Month"] == month]
 
-        sns.barplot(
-            x='Ticker',
-            y='monthly_return_pct',
-            data=data['gainers'],
-            ax=ax[0]
-        )
-        ax[0].set_title("Top 5 Gainers (%)")
+    gainers = selected.sort_values("Month_Return", ascending=False).head(5)
+    losers = selected.sort_values("Month_Return", ascending=True).head(5)
 
-        sns.barplot(
-            x='Ticker',
-            y='monthly_return_pct',
-            data=data['losers'],
-            ax=ax[1]
-        )
-        ax[1].set_title("Top 5 Losers (%)")
+    col1, col2 = st.columns(2)
 
-        st.pyplot(fig)
+    col1.write("🟢 Top 5 Gainers")
+    col1.dataframe(gainers)
+
+    col2.write("🔴 Top 5 Losers")
+    col2.dataframe(losers)
