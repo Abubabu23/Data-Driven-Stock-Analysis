@@ -1,4 +1,4 @@
-<img width="1912" height="916" alt="image" src="https://github.com/user-attachments/assets/2645ee61-3a72-44bf-afc6-39de3f4deb6c" /># Stock Performance Dashboard – Nifty 50
+
 
 An end-to-end data analytics project that analyzes the performance of **Nifty 50 stocks** over the past year.  
 The project converts stock data from **YAML format to CSV** and presents key insights through an **interactive Streamlit dashboard**.
@@ -72,7 +72,7 @@ streamlit_app.py # Interactive Streamlit dashboard
 
 ### Monthly Gainers & Losers
  Top 5 gainers and losers for each month
-<img width="1910" height="908" alt="Image" src="https://github.com/user-attachments/assets/f75a03c9-c8bc-4ff4-a642-c648d021eb4b" />
+
 <img width="1912" height="915" alt="Image" src="https://github.com/user-attachments/assets/12121270-4c86-47d2-b20d-729c066ea50b" />
 
 ## Technologies Used
