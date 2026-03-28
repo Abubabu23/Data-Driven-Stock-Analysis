@@ -1,4 +1,4 @@
-# Stock Performance Dashboard – Nifty 50
+<img width="1912" height="916" alt="image" src="https://github.com/user-attachments/assets/2645ee61-3a72-44bf-afc6-39de3f4deb6c" /># Stock Performance Dashboard – Nifty 50
 
 An end-to-end data analytics project that analyzes the performance of **Nifty 50 stocks** over the past year.  
 The project converts stock data from **YAML format to CSV** and presents key insights through an **interactive Streamlit dashboard**.
@@ -39,52 +39,41 @@ streamlit_app.py # Interactive Streamlit dashboard
 
 ## Key Features
 
-### Market Overview
+### Market Overview & Stock Performance Ranking
  Average stock price
  Average trading volume
  Percentage of green vs red stocks
+ Top 10 **best-performing (green)** stocks
+ Top 10 **worst-performing (red)**
+ 
  <img width="1915" height="922" alt="Image" src="https://github.com/user-attachments/assets/40f11c6d-a9eb-44b3-aa73-a3bde940c9b2" />
  
-### Stock Performance Ranking
- Top 10 **best-performing (green)** stocks
- Top 10 **worst-performing (red)** stocks
- 
-<img width="1911" height="859" alt="Image" src="https://github.com/user-attachments/assets/9b277ebb-122c-4d9a-b894-15ca930c4fad" />
-
-<img width="1914" height="921" alt="Image" src="https://github.com/user-attachments/assets/bee68cac-e696-4e66-ab8a-f7cc1e48e884" />
-
 ### Volatility Analysis
  Daily return calculation
  Standard deviation used to measure volatility
  Top 10 most volatile stocks visualization
 
-<img width="1910" height="925" alt="Image" src="https://github.com/user-attachments/assets/e9c84a0a-3af4-4c23-9d8d-9416e14b20db" />
+<img width="1912" height="916" alt="Image" src="https://github.com/user-attachments/assets/0f5e6055-ac57-4b38-b5bb-24e158810803" />
 
 ### Cumulative Return
  Yearly cumulative return calculation
  Line chart for top 5 performing stocks
 
- <img width="1913" height="921" alt="Image" src="https://github.com/user-attachments/assets/f37bdb98-0b08-4032-a924-68ab8da46e88" />
+ <img width="1910" height="918" alt="Image" src="https://github.com/user-attachments/assets/3c42fa8e-ff6a-41a8-8972-07f5b6607496" />
 
 ### Sector-wise Performance
  Average yearly return by sector
-
- <img width="1905" height="913" alt="Image" src="https://github.com/user-attachments/assets/775ff0ee-2650-41df-b363-91f645477bbc" />
- <img width="1904" height="915" alt="Image" src="https://github.com/user-attachments/assets/99f6530c-157b-4dc0-a28c-93b67cbb3d01" />
+<img width="1914" height="918" alt="Image" src="https://github.com/user-attachments/assets/3e27eb52-d922-4145-97a7-a85d586dd312" />
 
 ### Stock Correlation
  Correlation matrix of stock closing prices
  Heatmap to visualize relationships between stocks
-
- <img width="1911" height="922" alt="Image" src="https://github.com/user-attachments/assets/09d656d9-f7e9-467f-85c8-4c6a7708783c" />
+<img width="1915" height="912" alt="Image" src="https://github.com/user-attachments/assets/ca2aab53-eca3-44e6-8a63-e2e6b4494b44" />
 
 ### Monthly Gainers & Losers
  Top 5 gainers and losers for each month
 <img width="1910" height="908" alt="Image" src="https://github.com/user-attachments/assets/f75a03c9-c8bc-4ff4-a642-c648d021eb4b" />
-
-### PowerBi Dashboard
-
-<img width="1353" height="748" alt="Image" src="https://github.com/user-attachments/assets/3c5b1ee4-bce3-4091-ac51-8b415022d3bd" />
+<img width="1912" height="915" alt="Image" src="https://github.com/user-attachments/assets/12121270-4c86-47d2-b20d-729c066ea50b" />
 
 ## Technologies Used
 
