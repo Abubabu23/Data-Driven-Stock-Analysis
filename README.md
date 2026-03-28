@@ -43,9 +43,8 @@ streamlit_app.py # Interactive Streamlit dashboard
  Average stock price
  Average trading volume
  Percentage of green vs red stocks
+ <img width="1915" height="922" alt="Image" src="https://github.com/user-attachments/assets/40f11c6d-a9eb-44b3-aa73-a3bde940c9b2" />
  
-<img width="1912" height="917" alt="Image" src="https://github.com/user-attachments/assets/7e008168-9095-4342-a9ae-41517e8d6257" />
-
 ### Stock Performance Ranking
  Top 10 **best-performing (green)** stocks
  Top 10 **worst-performing (red)** stocks
