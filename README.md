@@ -88,7 +88,7 @@ streamlit_app.py # Interactive Streamlit dashboard
 
 - Step 1 --> Install Required Libraries
 - Step2 -->  Convert YAML to CSV (python yaml_to_csv.py)
-- Step3 -->  Run the Streamlit Dashboard (streamlit run streamlit_app.py)
+- Step3 -->  Run the Streamlit Dashboard (streamlit run streamlit.py)
 
 
 ##Why This Project Is Useful**
